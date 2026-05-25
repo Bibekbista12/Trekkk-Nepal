@@ -4,7 +4,7 @@ import dj_database_url
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-9xk2!fallback-key")
 DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = [
     "trekkk-nepal.onrender.com",
@@ -105,4 +105,3 @@ LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
 
 
-SECRET_KEY = os.environ.get("SECRET_KEY")
