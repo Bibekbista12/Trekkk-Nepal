@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% block title %}{{ trek.name }} — TrekNepal{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+  <!-- Left: Trek Info -->
+  <div class="lg:col-span-2">
+
+    <!-- Cover Image -->
+    {% with trek.images.all as images %}
+      {% if images %}
+        <img src="{{ images.0.image.url }}"
+          class="w-full h-80 object-cover rounded-2xl mb-4">
+
+        <!-- Gallery thumbnails -->
+        {% if images|length > 1 %}
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+          {% for img in images %}
+          <img src="{{ img.image.url }}"
+            class="h-20 w-28 object-cover rounded-lg cursor-pointer hover:opacity-80 flex-shrink-0 border-2 border-transparent hover:border-green-500"
+            onclick="document.querySelector('.main-img').src='{{ img.image.url }}'">
+          {% endfor %}
+        </div>
+        {% endif %}
+
+      {% elif trek.cover_image %}
+        <img src="{{ trek.cover_image.url }}"
+          class="w-full h-80 object-cover rounded-2xl mb-6">
+      {% else %}
+        <div class="w-full h-80 bg-green-100 flex items-center justify-center rounded-2xl mb-6 text-6xl">🏔</div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Badges -->
+    <div class="flex flex-wrap gap-2 mb-4">
+      <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">{{ trek.get_region_display }}</span>
+      <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">{{ trek.duration }} days</span>
+      <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm">{{ trek.get_difficulty_display }}</span>
+      <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">Max {{ trek.max_group }} people</span>
+    </div>
+
+    <h1 class="text-3xl font-bold mb-4">{{ trek.name }}</h1>
+    <p class="text-gray-600 leading-relaxed text-lg mb-8">{{ trek.description }}</p>
+
+    <!-- Trek Highlights -->
+    <div class="bg-green-50 rounded-xl p-6 mb-8">
+      <h2 class="font-bold text-lg mb-3 text-green-800">Trek Highlights</h2>
+      <div class="grid grid-cols-2 gap-3 text-sm">
+        <div class="flex items-center gap-2">
+          <span class="text-green-600">✓</span>
+          <span>Duration: {{ trek.duration }} days</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-green-600">✓</span>
+          <span>Difficulty: {{ trek.get_difficulty_display }}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-green-600">✓</span>
+          <span>Region: {{ trek.get_region_display }}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-green-600">✓</span>
+          <span>Group size: up to {{ trek.max_group }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews -->
+    <div>
+      <h2 class="text-2xl font-bold mb-2">
+        Reviews
+        {% if avg_rating %}
+          <span class="text-yellow-500 text-base font-normal ml-2">
+            ★ {{ avg_rating|floatformat:1 }} / 5
+            ({{ reviews.count }} review{{ reviews.count|pluralize }})
+          </span>
+        {% endif %}
+      </h2>
+
+      {% for review in reviews %}
+      <div class="border-b py-5">
+        <div class="flex justify-between items-center mb-2">
+          <strong>{{ review.user.get_full_name|default:review.user.username }}</strong>
+          <span class="text-yellow-400 text-lg">
+            {% for i in "12345" %}
+              {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+            {% endfor %}
+          </span>
+        </div>
+        <p class="text-gray-600">{{ review.comment }}</p>
+        <p class="text-xs text-gray-400 mt-1">{{ review.created_at|date:"M d, Y" }}</p>
+      </div>
+      {% empty %}
+        <p class="text-gray-400 py-6">No reviews yet. Be the first!</p>
+      {% endfor %}
+    </div>
+
+  </div>
+
+  <!-- Right: Booking Card -->
+  <div>
+    <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
+      <p class="text-4xl font-bold text-green-700">${{ trek.price }}</p>
+      <p class="text-gray-400 text-sm mb-6">per person</p>
+
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'create-booking' trek.slug %}">
+          {% csrf_token %}
+
+          <label class="block text-sm font-medium text-gray-700 mb-1">Trek Start Date</label>
+          <input type="date" name="trek_date" required
+            class="w-full border rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-green-400">
+
+          <label class="block text-sm font-medium text-gray-700 mb-1">Number of People</label>
+          <input type="number" name="num_people" min="1" max="{{ trek.max_group }}" value="1"
+            class="w-full border rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-green-400">
+
+          <label class="block text-sm font-medium text-gray-700 mb-1">Special Requirements</label>
+          <textarea name="special_req" rows="2"
+            class="w-full border rounded-lg px-3 py-2 mb-5 focus:outline-none focus:ring-2 focus:ring-green-400"
+            placeholder="Dietary needs, medical info..."></textarea>
+
+          <button type="submit"
+            class="w-full bg-green-600 text-white py-3 rounded-xl font-bold text-lg hover:bg-green-700">
+            Book Now
+          </button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}"
+          class="block text-center bg-green-600 text-white py-3 rounded-xl font-bold text-lg hover:bg-green-700 mb-3">
+          Login to Book
+        </a>
+        <p class="text-center text-sm text-gray-400">
+          New here? <a href="{% url 'register' %}" class="text-green-600 hover:underline">Register</a>
+        </p>
+      {% endif %}
+
+      <div class="mt-5 text-xs text-gray-400 text-center space-y-1">
+        <p>✓ Free cancellation on pending bookings</p>
+        <p>✓ Instant confirmation</p>
+        <p>✓ Secure booking</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

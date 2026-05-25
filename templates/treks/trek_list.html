@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Explore Treks — TrekNepal{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<div class="bg-green-700 text-white rounded-2xl p-10 mb-10 text-center">
+  <h1 class="text-4xl font-bold mb-2">Explore Nepal's Best Treks</h1>
+  <p class="text-green-200">Find your perfect adventure in the Himalayas</p>
+</div>
+
+<!-- Search & Filter -->
+<form method="get" class="bg-white p-4 rounded-xl shadow mb-8 flex flex-wrap gap-3">
+  <input name="q" value="{{ request.GET.q }}"
+    placeholder="Search treks..."
+    class="border rounded-lg px-3 py-2 flex-1 min-w-48 focus:outline-none focus:ring-2 focus:ring-green-400">
+
+  <select name="region" class="border rounded-lg px-3 py-2 focus:outline-none">
+    <option value="">All Regions</option>
+    {% for val, label in regions %}
+      <option value="{{ val }}" {% if request.GET.region == val %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+
+  <select name="difficulty" class="border rounded-lg px-3 py-2 focus:outline-none">
+    <option value="">Any Difficulty</option>
+    {% for val, label in difficulties %}
+      <option value="{{ val }}" {% if request.GET.difficulty == val %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+
+  <input name="max_price" value="{{ request.GET.max_price }}"
+    placeholder="Max price $"
+    class="border rounded-lg px-3 py-2 w-32 focus:outline-none">
+
+  <button type="submit"
+    class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 font-medium">
+    Search
+  </button>
+  <a href="/" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-200">Clear</a>
+</form>
+
+<!-- Trek Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {% for trek in treks %}
+  <a href="{{ trek.get_absolute_url }}"
+    class="bg-white rounded-xl shadow hover:shadow-lg overflow-hidden group transition">
+
+    {% if trek.cover_image %}
+      <img src="{{ trek.cover_image.url }}"
+        class="w-full h-52 object-cover group-hover:scale-105 transition duration-300">
+    {% else %}
+      <div class="w-full h-52 bg-green-100 flex items-center justify-center text-green-400 text-4xl">🏔</div>
+    {% endif %}
+
+    <div class="p-5">
+      <div class="flex justify-between items-start mb-2">
+        <h2 class="font-bold text-lg">{{ trek.name }}</h2>
+        {% if trek.is_featured %}
+          <span class="bg-yellow-100 text-yellow-700 text-xs font-medium px-2 py-1 rounded-full">Featured</span>
+        {% endif %}
+      </div>
+
+      <div class="flex flex-wrap gap-2 mb-3">
+        <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">{{ trek.get_region_display }}</span>
+        <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">{{ trek.duration }} days</span>
+        <span class="bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded-full">{{ trek.get_difficulty_display }}</span>
+      </div>
+
+      <p class="text-gray-500 text-sm mb-4 line-clamp-2">{{ trek.description|truncatewords:15 }}</p>
+
+      <div class="flex justify-between items-center">
+        <span class="text-green-700 font-bold text-xl">${{ trek.price }}</span>
+        <span class="text-gray-400 text-sm">per person</span>
+      </div>
+    </div>
+  </a>
+  {% empty %}
+    <div class="col-span-3 text-center py-16 text-gray-400">
+      <p class="text-4xl mb-3">🔍</p>
+      <p class="text-lg">No treks found. Try different filters.</p>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<div class="flex justify-center gap-2 mt-10">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}&region={{ request.GET.region }}"
+      class="px-4 py-2 border rounded-lg hover:bg-gray-100">← Prev</a>
+  {% endif %}
+  <span class="px-4 py-2 text-gray-500">Page {{ page_obj.number }} of {{ page_obj.num_pages }}</span>
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}&region={{ request.GET.region }}"
+      class="px-4 py-2 border rounded-lg hover:bg-gray-100">Next →</a>
+  {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}
