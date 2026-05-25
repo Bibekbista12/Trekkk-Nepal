@@ -46,12 +46,18 @@
   <a href="{{ trek.get_absolute_url }}"
     class="bg-white rounded-xl shadow hover:shadow-lg overflow-hidden group transition">
 
-    {% if trek.cover_image %}
-      <img src="{{ trek.cover_image.url }}"
-        class="w-full h-52 object-cover group-hover:scale-105 transition duration-300">
-    {% else %}
-      <div class="w-full h-52 bg-green-100 flex items-center justify-center text-green-400 text-4xl">🏔</div>
-    {% endif %}
+    <!-- Image -->
+    {% with trek.images.first as main_image %}
+      {% if main_image %}
+        <img src="{{ main_image.image.url }}"
+          class="w-full h-52 object-cover group-hover:scale-105 transition duration-300">
+      {% elif trek.cover_image %}
+        <img src="{{ trek.cover_image.url }}"
+          class="w-full h-52 object-cover group-hover:scale-105 transition duration-300">
+      {% else %}
+        <div class="w-full h-52 bg-green-100 flex items-center justify-center text-green-400 text-4xl">🏔</div>
+      {% endif %}
+    {% endwith %}
 
     <div class="p-5">
       <div class="flex justify-between items-start mb-2">
