@@ -10,7 +10,8 @@
     <!-- Cover Image -->
     {% with trek.images.all as images %}
       {% if images %}
-        <img src="{{ images.0.image.url }}"
+        <!-- Main Image -->
+        <img id="mainImage" src="{{ images.0.image.url }}"
           class="w-full h-80 object-cover rounded-2xl mb-4">
 
         <!-- Gallery thumbnails -->
@@ -18,8 +19,8 @@
         <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
           {% for img in images %}
           <img src="{{ img.image.url }}"
-            class="h-20 w-28 object-cover rounded-lg cursor-pointer hover:opacity-80 flex-shrink-0 border-2 border-transparent hover:border-green-500"
-            onclick="document.querySelector('.main-img').src='{{ img.image.url }}'">
+            class="h-20 w-28 object-cover rounded-lg cursor-pointer hover:opacity-80 flex-shrink-0 border-2 {% if forloop.first %}border-green-500{% else %}border-transparent{% endif %}"
+            onclick="switchImage('{{ img.image.url }}', this)">
           {% endfor %}
         </div>
         {% endif %}
@@ -145,4 +146,18 @@
   </div>
 
 </div>
+
+<!-- Image Switcher Script -->
+<script>
+function switchImage(url, thumb) {
+  document.getElementById('mainImage').src = url;
+  document.querySelectorAll('[onclick]').forEach(el => {
+    el.classList.remove('border-green-500');
+    el.classList.add('border-transparent');
+  });
+  thumb.classList.remove('border-transparent');
+  thumb.classList.add('border-green-500');
+}
+</script>
+
 {% endblock %}
