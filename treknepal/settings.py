@@ -87,6 +87,21 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
  
  #Cloudinary for media/images
 
+#CLOUDINARY_STORAGE = {
+   # 'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
+    #'API_KEY':    config('CLOUDINARY_API_KEY', default=''),
+    #'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+#}
+
+
+import cloudinary
+
+cloudinary.config(
+    cloud_name = config('CLOUDINARY_CLOUD_NAME', default=''),
+    api_key    = config('CLOUDINARY_API_KEY', default=''),
+    api_secret = config('CLOUDINARY_API_SECRET', default=''),
+)
+
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
     'API_KEY':    config('CLOUDINARY_API_KEY', default=''),
