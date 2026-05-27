@@ -95,18 +95,24 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 cloudinary.config(
-    cloud_name = config('CLOUDINARY_CLOUD_NAME', default=''),
-    api_key    = config('CLOUDINARY_API_KEY', default=''),
-    api_secret = config('CLOUDINARY_API_SECRET', default=''),
+    cloud_name = 'dz6lhsv8q',
+    api_key    = '573883121927194',
+    api_secret = 'J9tPvwDY5RYWCf0xcUC--Fb6W9U',
+    secure     = True
 )
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
-    'API_KEY':    config('CLOUDINARY_API_KEY', default=''),
-    'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+    'CLOUD_NAME': 'dz6lhsv8q',
+    'API_KEY':    '573883121927194',
+    'API_SECRET': 'J9tPvwDY5RYWCf0xcUC--Fb6W9U',
 }
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+MEDIA_URL = 'https://res.cloudinary.com/dz6lhsv8q/'
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
