@@ -12,7 +12,7 @@
       {% if images %}
         <!-- Main Image -->
         <img id="mainImage"
-          src="https://res.cloudinary.com/dz6lhsv8q/image/upload/{{ images.0.image }}"
+          src="{{ images.0.image.url }}"
           class="w-full h-80 object-cover rounded-2xl mb-4">
 
         <!-- Gallery thumbnails -->
@@ -20,9 +20,11 @@
         <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
           {% for img in images %}
           <img
-            src="https://res.cloudinary.com/dz6lhsv8q/image/upload/{{ img.image }}"
+            src="{{ img.image.url }}"
+
             class="h-20 w-28 object-cover rounded-lg cursor-pointer hover:opacity-80 flex-shrink-0 border-2 {% if forloop.first %}border-green-500{% else %}border-transparent{% endif %}"
-            onclick="switchImage('https://res.cloudinary.com/dz6lhsv8q/image/upload/{{ img.image }}', this)">
+            onclick="switchImage('{{ img.image.url }}', this)"
+
           {% endfor %}
         </div>
         {% endif %}
