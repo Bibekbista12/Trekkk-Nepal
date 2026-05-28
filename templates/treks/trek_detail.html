@@ -11,22 +11,24 @@
     {% with trek.images.all as images %}
       {% if images %}
         <!-- Main Image -->
-        <img id="mainImage" src="{{ images.0.image.url }}"
+        <img id="mainImage"
+          src="https://res.cloudinary.com/dz6lhsv8q/image/upload/{{ images.0.image }}"
           class="w-full h-80 object-cover rounded-2xl mb-4">
 
         <!-- Gallery thumbnails -->
         {% if images|length > 1 %}
         <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
           {% for img in images %}
-          <img src="{{ img.image.url }}"
+          <img
+            src="https://res.cloudinary.com/dz6lhsv8q/image/upload/{{ img.image }}"
             class="h-20 w-28 object-cover rounded-lg cursor-pointer hover:opacity-80 flex-shrink-0 border-2 {% if forloop.first %}border-green-500{% else %}border-transparent{% endif %}"
-            onclick="switchImage('{{ img.image.url }}', this)">
+            onclick="switchImage('https://res.cloudinary.com/dz6lhsv8q/image/upload/{{ img.image }}', this)">
           {% endfor %}
         </div>
         {% endif %}
 
       {% elif trek.cover_image %}
-        <img src="{{ trek.cover_image.url }}"
+        <img src="https://res.cloudinary.com/dz6lhsv8q/image/upload/{{ trek.cover_image }}"
           class="w-full h-80 object-cover rounded-2xl mb-6">
       {% else %}
         <div class="w-full h-80 bg-green-100 flex items-center justify-center rounded-2xl mb-6 text-6xl">🏔</div>
