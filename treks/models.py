@@ -54,10 +54,18 @@ class Trek(models.Model):
 
 class TrekImage(models.Model):
     trek        = models.ForeignKey(Trek, on_delete=models.CASCADE, related_name='images')
-    image       = models.ImageField(upload_to='treks/gallery/')
+    image       = models.ImageField(upload_to='treks/gallery/', blank=True, null=True)
+    image_url   = models.URLField(blank=True)
     caption     = models.CharField(max_length=200, blank=True)
     is_cover    = models.BooleanField(default=False)
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def get_image_url(self):
+        if self.image_url:
+            return self.image_url
+        if self.image:
+            return f'https://res.cloudinary.com/dz6lhsv8q/image/upload/{self.image}'
+        return ''
 
     def __str__(self):
         return f"Image for {self.trek.name}"
